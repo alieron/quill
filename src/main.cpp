@@ -3,6 +3,8 @@
 #include <glad/gl.h>
 #include <GLFW/glfw3.h>
 
+#include "camera.h"
+
 // int main(int, char**) {
 //     GLFWwindow* window;
     

@@ -9,11 +9,9 @@ cmake_policy(SET CMP0072 NEW)
 
 file(GLOB SOURCES src/main.cpp)
 # file(GLOB SOURCES "src/*.cpp" "${SOURCE_DIR}/lib/*/*/*/*.cpp" "${SOURCE_DIR}/lib/*/*/*/*/*.cpp") 
-# include_directories(${SOURCE_DIR}/src)
+include_directories(src)
 include_directories(lib)
 # include_directories(lib/glfw/include)
-# include_directories(${SOURCE_DIR}/lib/glm/include)
-# include_directories(${SOURCE_DIR}/lib/imgui/include)
 
 add_executable(${PROJECT_NAME} ${SOURCES})
 # LINK_DIRECTORIES(/usr/local/lib)
