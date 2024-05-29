@@ -43,3 +43,12 @@ General:
 
 Eventual:
  - [ ] How to update the default texture pack as the game updates
+
+Reference for camera.h
+https://github.com/yocover/start-learning-opengl
+
+VAO VBO to merge into one model/element class
+https://github.com/VictorGordan/opengl-tutorials
+
+Shader.cpp for shader as a shader program
+https://github.com/amanshenoy/mesh-viewer

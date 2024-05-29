@@ -15,5 +15,4 @@ Makefile
 #ImGUI
 imgui.ini
 
-/old
-/resourcepacks
+/resourcepacks/1.18.1
