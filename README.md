@@ -2,25 +2,29 @@
 
 Texture pack renderer
 
-The 8 vertices will look like this:
-
 ```
-  v5 ----------- v6
+  v4 ----------- v5
   /|            /|      Axis orientation    North orientation
  / |           / |
-v4 --------- v7  |      y
+v0 --------- v1  |      y
 |  |         |   |      |                       
-|  v0 -------|-- v3     +--- x                 /
+|  v6 -------|-- v7     +--- x                 /
 | /          |  /      /                      /
 |/           | /      z                     North
-v1 --------- v2
+v2 --------- v3
 
 
 Triangle primitives must be drawn in a anticlockwise order
 
-Vertex draw order: 0, 2, 1, 0, 3, 2, 4, 6, 5, 4, 7, 6, 3, 5, 6, 3, 0, 5, 1, 7, 4, 1, 2, 7, 0, 4, 5, 0, 1, 4, 2, 6, 7, 2, 3, 6    
+Vertex draw order: 
+	1, 0, 2,    3, 1, 2,    // Front face
+	5, 1, 3,    7, 5, 3,    // Right face
+	7, 6, 4,    5, 7, 4,    // Back face
+	0, 4, 6,    2, 0, 6,    // Left face
+	5, 4, 0,    1, 5, 0,    // Top face
+	3, 2, 6,    7, 3, 6     // Bottom face  
 ```
-Where v0, v4, v5, v1 is the top face
+Where v1, v0, v2, v3 is the front face
 
 Good references:
  - https://github.com/jayanam/jgl_demos/tree/master - 3D scene renderer with property panel
