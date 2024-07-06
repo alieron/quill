@@ -14,7 +14,15 @@ v0 --------- v1  |      y
 v2 --------- v3
 
 
-Triangle primitives must be drawn in a anticlockwise order
+Triangle primitives must be drawn in a anticlockwise order when looking from the outside
+
+JSON Order:
+	down
+	up
+	north
+	south
+	west
+	east
 
 Vertex draw order: 
 	1, 0, 2,    3, 1, 2,    // Front face
@@ -49,6 +57,7 @@ Eventual:
  - [ ] How to update the default texture pack as the game updates
 
 Reference for camera.h
+https://github.com/DethRaid/minecraft-texture-viewer/blob/master/src/render/camera.h
 https://github.com/yocover/start-learning-opengl
 
 VAO VBO to merge into one model/element class

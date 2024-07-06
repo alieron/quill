@@ -27,7 +27,7 @@ public:
         }
     }
 
-    void program_errors (const GLint program){
+    void program_errors(const GLint program){
         GLint length; 
         GLchar * log; 
         glGetProgramiv(program, GL_INFO_LOG_LENGTH, &length); 
@@ -39,7 +39,7 @@ public:
         delete [] log; 
     }
 
-    void shader_errors (const GLint shader){
+    void shader_errors(const GLint shader){
         GLint length; 
         GLchar * log; 
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length); 
@@ -51,25 +51,25 @@ public:
         delete [] log; 
     }
 
-    GLuint init_shaders (GLenum type, const char *filename){
+    GLuint init_shaders(GLenum type, const char *filename){
         GLuint shader = glCreateShader(type);
         GLint compiled; 
 
-        std::string str = read_text_file (filename); 
+        std::string str = read_text_file(filename); 
         const char * cstr = str.c_str();
 
-        glShaderSource (shader, 1, &cstr, NULL); 
-        glCompileShader (shader); 
-        glGetShaderiv (shader, GL_COMPILE_STATUS, &compiled); 
+        glShaderSource(shader, 1, &cstr, NULL); 
+        glCompileShader(shader); 
+        glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled); 
 
         if (!compiled){ 
-            shader_errors (shader); 
+            shader_errors(shader); 
             throw 3; 
         }
         return shader; 
     }
 
-    GLuint init_program (GLuint vertexshader, GLuint fragmentshader){
+    GLuint init_program(GLuint vertexshader, GLuint fragmentshader){
         GLuint program = glCreateProgram(); 
         GLint linked; 
 
