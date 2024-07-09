@@ -12,60 +12,33 @@
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 
-// int main(int, char**) {
-//     GLFWwindow* window;
-    
-//     if (!glfwInit()) {
-//         return -1;
-//     }
-
-//     window = glfwCreateWindow(640,480,"Window",glfwGetPrimaryMonitor(),NULL);
-//     std::cout << "window created" << std::endl;
-//     glfwMakeContextCurrent(window);
-//     // glfwSetWindowPos(window, 256, 256);
-
-//     if (!gladLoadGL(glfwGetProcAddress)) {
-//         std::cout << "Error Loading OpenGL" << std::endl;
-//         glfwTerminate();
-//         return -1;
-//     }
-
-//     glClearColor(0.25f,0.5f,0.75f,1.0f);
-
-//     while (glfwWindowShouldClose(window)) {
-//         glfwPollEvents();
-
-//         glClear(GL_COLOR_BUFFER_BIT);
-
-//         glfwSwapBuffers(window);
-//     }
-//     glfwTerminate();
-//     return 0;
-// }
-
 void framebuffer_size_callback(GLFWwindow *window, int width, int height);
 void mouse_callback(GLFWwindow *window, double xpos, double ypos);
 void mouse_button_callback(GLFWwindow *window, int button, int action, int mods);
 void scroll_callback(GLFWwindow *window, double x, double y);
-void processInput(GLFWwindow *window);
+void processKeyboardInput(GLFWwindow *window);
 
 int SCREEN_WIDTH = 800;
 int SCREEN_HEIGHT = 600;
 
-// camera value
-glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
-glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
+// // camera value
+// glm::vec3 cameraPos = glm::vec3(0.0f, 0.0f, 3.0f);
+// glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
+// glm::vec3 cameraUp = glm::vec3(0.0f, 1.0f, 0.0f);
 
-// delta time
-float deltaTime = 0.0f;
-float lastTime = 0.0f;
+// // delta time
+// float deltaTime = 0.0f;
+// float lastTime = 0.0f;
 
-float lastX = SCREEN_WIDTH / 2.0f;
-float lastY = SCREEN_HEIGHT / 2.0f;
+// float lastX = SCREEN_WIDTH / 2.0f;
+// float lastY = SCREEN_HEIGHT / 2.0f;
+float lastX;
+float lastY;
 float fov = 45.0f;
+bool orbitMode = false;
+bool translateMode = false;
 
-Camera camera(glm::vec3(0.0, 0.0, 5.0));
+Camera camera = Camera();
 
 int main()
 {	
@@ -77,11 +50,10 @@ int main()
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+	glfwWindowHint(GLFW_DECORATED, GLFW_FALSE); // Disable top bar
 
-	GLFWwindow* window = glfwCreateWindow(800, 800, "Quill Viewer", NULL, NULL);
-	if (window == NULL)
-	{
+	GLFWwindow* window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Quill Viewer", NULL, NULL);
+	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		return -1;
@@ -95,7 +67,7 @@ int main()
     }
 	// End Boilerplate
 
-	glViewport(0, 0, 800, 800);
+	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
@@ -110,10 +82,10 @@ int main()
 	// works up to here
 
 	float vertices[] = {
-		0.5f, 0.5f, 0.0f, 1.0f, 1.0f,
-		0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
-		-0.5f, -0.5f, 0.0f, 0.0, 0.0f,
-		-0.5f, 0.5f, 0.0f, 0.0f, 1.0f
+		0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
+		0.5f, -0.5f, 0.5f, 1.0f, 1.0f,
+		-0.5f, -0.5f, 0.5f, 0.0, 1.0f,
+		-0.5f, 0.5f, 0.5f, 0.0f, 0.0f
 	};
 
 	unsigned int indices[] = {
@@ -155,10 +127,10 @@ int main()
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 	// load and generate the texture
 	int width, height, nrChannels;
-	unsigned char *data = stbi_load("../resourcepacks/test/textures/block/oak_log_top.png", &width, &height, &nrChannels, 0);
+	unsigned char *data = stbi_load("../resourcepacks/test/minecraft/textures/block/south_test.png", &width, &height, &nrChannels, 0);
 	if (data) {
 		unsigned int nColors = nrChannels-3 ? GL_RGBA : GL_RGB;
-		std::cout << nColors << " " << nrChannels << std::endl;
+		// std::cout << nColors << " " << nrChannels << std::endl;
 		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, nColors, GL_UNSIGNED_BYTE, data);
 		glGenerateMipmap(GL_TEXTURE_2D);
 	} else {
@@ -168,11 +140,11 @@ int main()
 
 	while (!glfwWindowShouldClose(window))
 	{	
-		processInput(window);
+		processKeyboardInput(window);
 
-		float currentFrame = glfwGetTime();
-		deltaTime = currentFrame - lastTime;
-		lastTime = currentFrame;
+		// float currentFrame = glfwGetTime();
+		// deltaTime = currentFrame - lastTime;
+		// lastTime = currentFrame;
 
 		glClearColor(25.0 / 255.0, 25.0 / 255.0, 25.0 / 255.0, 1.0);
 		glClear(GL_COLOR_BUFFER_BIT);
@@ -182,7 +154,7 @@ int main()
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, texture);
 
-		glm::mat4 view = camera.GetViewMatrix();
+		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 projection = glm::mat4(1.0f);
 		projection = glm::perspective(glm::radians(fov), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
 		glm::mat4 model = glm::mat4(1.0f);
@@ -213,78 +185,79 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 	SCREEN_HEIGHT = height;
 }
 
-void processInput(GLFWwindow *window)
+void processKeyboardInput(GLFWwindow *window)
 {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
   {
     glfwSetWindowShouldClose(window, true);
   }
-
-  if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+  if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
   {
-    camera.ProcessKeyboard(FORWARD, deltaTime);
-  }
-  if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-  {
-    camera.ProcessKeyboard(BACKWARD, deltaTime);
-  }
-  if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-  {
-    camera.ProcessKeyboard(LEFT, deltaTime);
-  }
-  if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-  {
-    camera.ProcessKeyboard(RIGHT, deltaTime);
+    camera.mCentre = glm::vec3(0.0f, 0.0f, 0.0f);
   }
 }
 
-// 鼠标移动监听
 void mouse_callback(GLFWwindow *window, double xpos, double ypos)
 {
+	// double xpos, ypos;
+	// glfwGetCursorPos(window, &xpos, &ypos);
 
-  float xoffset = xpos - lastX;
-  float yoffset = lastY - ypos;
+	// float xoffset = xpos - lastX;
+	// float yoffset = lastY - ypos;
+	float xoffset = lastX - xpos;
+	float yoffset = ypos - lastY;
 
-  lastX = xpos;
-  lastY = ypos;
+	lastX = xpos;
+	lastY = ypos;
 
-  camera.ProcessMouseMovement(xoffset, yoffset);
+	if (orbitMode) 
+		camera.orbitCam(xoffset, yoffset);
+	if (translateMode)
+		camera.translateCam(xoffset, yoffset);
 }
 void mouse_button_callback(GLFWwindow *window, int button, int action, int mods)
 {
-
-  	if (action == GLFW_PRESS)
-    switch (button)
-    {
-    case GLFW_MOUSE_BUTTON_LEFT:
-      // cout << "mouse left" << endl;
-      break;
-    case GLFW_MOUSE_BUTTON_MIDDLE:
-      // cout << "mouse middle" << endl;
-      break;
-    case GLFW_MOUSE_BUTTON_RIGHT:
-      // cout << "mouse right" << endl;
-      break;
-    }
+  	if (action == GLFW_PRESS) {
+		switch (button)
+		{
+		case GLFW_MOUSE_BUTTON_LEFT:
+			orbitMode = true;
+			return;
+		case GLFW_MOUSE_BUTTON_MIDDLE:
+			translateMode = true;
+			return;
+		case GLFW_MOUSE_BUTTON_RIGHT:
+			return;
+		}
+	}
+	if (action == GLFW_RELEASE) {
+		switch (button)
+		{
+		case GLFW_MOUSE_BUTTON_LEFT:
+			orbitMode = false;
+			return;
+		case GLFW_MOUSE_BUTTON_MIDDLE:
+			translateMode = false;
+			return;
+		case GLFW_MOUSE_BUTTON_RIGHT:
+			return;
+		}
+	}
 }
 
-void cursor_position_callback(GLFWwindow *window, double x, double y)
-{
-	float xpos = float((x - SCREEN_WIDTH / 2) / SCREEN_WIDTH) * 2;
-	float ypos = float(0 - (y - SCREEN_HEIGHT / 2) / SCREEN_HEIGHT) * 2;
+// void cursor_position_callback(GLFWwindow *window, double x, double y)
+// {
+// 	float xpos = float((x - SCREEN_WIDTH / 2) / SCREEN_WIDTH) * 2;
+// 	float ypos = float(0 - (y - SCREEN_HEIGHT / 2) / SCREEN_HEIGHT) * 2;
 
-	// cout << "xpos " << xpos << endl;
-	// cout << "ypos " << ypos << endl;
-	return;
-}
+// 	// cout << "xpos " << xpos << endl;
+// 	// cout << "ypos " << ypos << endl;
+// 	return;
+// }
 
 void scroll_callback(GLFWwindow *window, double x, double y)
 {
-	fov -= (float)y;
-	if (fov < 1.0f)
-		fov = 1.0f;
-	if (fov > 45.0f)
-		fov = 45.0f;
+	camera.zoomCam((float)y);
 	return;
 }
 
