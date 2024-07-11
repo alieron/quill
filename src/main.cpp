@@ -8,6 +8,7 @@
 
 #include "shader.h"
 #include "camera.h"
+#include "element.h"
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
@@ -44,8 +45,8 @@ int main()
 {	
 	// Boilerplate
 	if (!glfwInit()) {
-        return -1;
-    }
+		return -1;
+	}
 
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -61,13 +62,14 @@ int main()
 	glfwMakeContextCurrent(window);
 
 	if (!gladLoadGL(glfwGetProcAddress)) {
-        std::cout << "Error Loading OpenGL" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
+		std::cout << "Error Loading OpenGL" << std::endl;
+		glfwTerminate();
+		return -1;
+	}
 	// End Boilerplate
 
 	glViewport(0, 0, SCREEN_WIDTH, SCREEN_HEIGHT);
+	// glPolygonMode(GL_FRONT_FACE, GL_FILL);
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 	glfwSetCursorPosCallback(window, mouse_callback);
 	glfwSetMouseButtonCallback(window, mouse_button_callback);
@@ -75,68 +77,77 @@ int main()
 
 	Shader shader;
 	GLuint vertexshader, fragmentshader, shaderprogram;
-    vertexshader = shader.init_shaders(GL_VERTEX_SHADER, "../res/shaders/vertex.glsl") ;
-    fragmentshader = shader.init_shaders(GL_FRAGMENT_SHADER, "../res/shaders/fragment.glsl") ;
-    shaderprogram = shader.init_program(vertexshader, fragmentshader) ;
+	vertexshader = shader.init_shaders(GL_VERTEX_SHADER, "../res/shaders/vertex.glsl") ;
+	fragmentshader = shader.init_shaders(GL_FRAGMENT_SHADER, "../res/shaders/fragment.glsl") ;
+	shaderprogram = shader.init_program(vertexshader, fragmentshader) ;
 
 	// works up to here
 
-	float vertices[] = {
-		0.5f, 0.5f, 0.5f, 1.0f, 0.0f,
-		0.5f, -0.5f, 0.5f, 1.0f, 1.0f,
-		-0.5f, -0.5f, 0.5f, 0.0, 1.0f,
-		-0.5f, 0.5f, 0.5f, 0.0f, 0.0f
-	};
+	Element testCube = Element();
+	testCube._testTextures();
 
-	unsigned int indices[] = {
-		0, 1, 3,
-		1, 2, 3
-	};
+	// float vertices[] = {
+	// 	0.5f, 0.5f, 0.5f, 1.0f, 0.0f, // 0
+	// 	-0.5f, -0.5f, 0.5f, 0.0, 1.0f, // 2
+	// 	0.5f, -0.5f, 0.5f, 1.0f, 1.0f, // 1
+	// 	-0.5f, 0.5f, 0.5f, 0.0f, 0.0f // 3
+	// };
 
-	unsigned int VBO, EBO, VAO;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
+	// unsigned int indices[] = {
+	// 	0, 1, 2,    0, 3, 1
+	// };
 
-	glBindVertexArray(VAO);
+	// unsigned int VBO, EBO, VAO;
+	// glGenVertexArrays(1, &VAO);
+	// glGenBuffers(1, &VBO);
+	// glGenBuffers(1, &EBO);
 
-	glBindBuffer(GL_ARRAY_BUFFER, VBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	// glBindVertexArray(VAO);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+	// glBindBuffer(GL_ARRAY_BUFFER, VBO);
+	// glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
-	glEnableVertexAttribArray(0);
+	// glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	// glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
 
-	// glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
+	// glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)0);
+	// glEnableVertexAttribArray(0);
+
+	// // glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void *)(3 * sizeof(float)));
+	// // glEnableVertexAttribArray(1);
+
+	// glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
 	// glEnableVertexAttribArray(1);
 
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 5 * sizeof(float), (void *)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	// glBindVertexArray(0);
 
-	glBindVertexArray(0);
+	// unsigned int texture;
+	// glGenTextures(1, &texture);
+	// glBindTexture(GL_TEXTURE_2D, texture);
+	// // set the texture wrapping/filtering options (on the currently bound texture object)
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	// glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+	// // load and generate the texture
+	// int width, height, nrChannels;
+	// unsigned char *data = stbi_load("../resourcepacks/test/minecraft/textures/block/oak_leaves.png", &width, &height, &nrChannels, 0);
+	// if (data) {
+	// 	unsigned int nColors = nrChannels-3 ? GL_RGBA : GL_RGB;
+	// 	// std::cout << nColors << " " << nrChannels << std::endl;
+	// 	glTexImage2D(GL_TEXTURE_2D, 0, nColors, width, height, 0, nColors, GL_UNSIGNED_BYTE, data);
+	// 	glGenerateMipmap(GL_TEXTURE_2D);
+	// } else {
+	// 	std::cout << "Failed to load texture" << std::endl;
+	// }
+	// stbi_image_free(data);
 
-	unsigned int texture;
-	glGenTextures(1, &texture);
-	glBindTexture(GL_TEXTURE_2D, texture);
-	// set the texture wrapping/filtering options (on the currently bound texture object)
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);	
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	// load and generate the texture
-	int width, height, nrChannels;
-	unsigned char *data = stbi_load("../resourcepacks/test/minecraft/textures/block/south_test.png", &width, &height, &nrChannels, 0);
-	if (data) {
-		unsigned int nColors = nrChannels-3 ? GL_RGBA : GL_RGB;
-		// std::cout << nColors << " " << nrChannels << std::endl;
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, nColors, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
-	} else {
-		std::cout << "Failed to load texture" << std::endl;
-	}
-	stbi_image_free(data);
+	glFrontFace(GL_CCW);
+	glCullFace(GL_BACK);
+	glEnable(GL_CULL_FACE);
+
+	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	glEnable(GL_BLEND);
 
 	while (!glfwWindowShouldClose(window))
 	{	
@@ -151,8 +162,8 @@ int main()
 
 		glUseProgram(shaderprogram);
 
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, texture);
+		// // glActiveTexture(GL_TEXTURE0);
+		// glBindTexture(GL_TEXTURE_2D, texture);
 
 		glm::mat4 view = camera.getViewMatrix();
 		glm::mat4 projection = glm::mat4(1.0f);
@@ -163,16 +174,18 @@ int main()
 		glUniformMatrix4fv(glGetUniformLocation(shaderprogram,"projection"), 1, GL_FALSE, glm::value_ptr(projection));
 		glUniformMatrix4fv(glGetUniformLocation(shaderprogram,"model"), 1, GL_FALSE, glm::value_ptr(model));
 
-		glBindVertexArray(VAO);
-		glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+		testCube.draw();
+		// glBindVertexArray(VAO);
+		// glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
 
-	glDeleteVertexArrays(1, &VAO);
-	glDeleteBuffers(1, &VBO);
-	glDeleteBuffers(1, &EBO);
+	// testCube.~Element(); // Don't need to call manually
+	// glDeleteVertexArrays(1, &VAO);
+	// glDeleteBuffers(1, &VBO);
+	// glDeleteBuffers(1, &EBO);
 
 	glfwTerminate();
 	return 0;
@@ -180,7 +193,7 @@ int main()
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-    glViewport(0, 0, width, height);
+	glViewport(0, 0, width, height);
 	SCREEN_WIDTH = width;
 	SCREEN_HEIGHT = height;
 }
@@ -189,11 +202,11 @@ void processKeyboardInput(GLFWwindow *window)
 {
   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
   {
-    glfwSetWindowShouldClose(window, true);
+	glfwSetWindowShouldClose(window, true);
   }
   if (glfwGetKey(window, GLFW_KEY_C) == GLFW_PRESS)
   {
-    camera.mCentre = glm::vec3(0.0f, 0.0f, 0.0f);
+	camera.mCentre = glm::vec3(0.0f, 0.0f, 0.0f);
   }
 }
 

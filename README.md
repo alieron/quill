@@ -1,20 +1,39 @@
 # quill
 
-Texture pack renderer
+## Texture pack renderer
+
+Progress
+ - [x] Draw a plane
+ - [x] Orbit camera
+ - [x] Draw test cube(unique faces)
+ - [x] Use from and to for cube corners
+ - [ ] Only draw 2 faces if the defined element is flat
+ - [ ] Scale UV coords
+ - [ ] GUI
+
+Rendering scheme
 
 ```
-  v4 ----------- v5
+  v5 ----------- v4
   /|            /|      Axis orientation    North orientation
  / |           / |
-v0 --------- v1  |      y
+v6 --------- v7  |      y
 |  |         |   |      |                       
-|  v6 -------|-- v7     +--- x                 /
+|  v2 -------|-- v3     +--- x                 /
 | /          |  /      /                      /
 |/           | /      z                     North
-v2 --------- v3
+v1 --------- v0
 
 
 Triangle primitives must be drawn in a anticlockwise order when looking from the outside
+
+(0,0) v1 --------- v0 (1,0)
+	  |          / |
+	  |        /   |
+	  |      /     |
+	  |    /       |						^
+	  |  /	       |						|
+(0,1) v2 --------- v3 (1,1)				Texture Up
 
 JSON Order:
 	down
@@ -25,14 +44,58 @@ JSON Order:
 	east
 
 Vertex draw order: 
-	1, 0, 2,    3, 1, 2,    // Front face
-	5, 1, 3,    7, 5, 3,    // Right face
-	7, 6, 4,    5, 7, 4,    // Back face
-	0, 4, 6,    2, 0, 6,    // Left face
-	5, 4, 0,    1, 5, 0,    // Top face
-	3, 2, 6,    7, 3, 6     // Bottom face  
+	0, 1, 2,    0, 2, 3,	// Down -Y
+	4, 5, 6, 	4, 6, 7,	// Up +Y
+	5, 4, 3, 	5, 3, 2,	// North -Z
+	7, 6, 1, 	7, 1, 0,	// South +Z
+	6, 5, 2, 	6, 2, 1,	// West -X
+	4, 7, 0, 	4, 0, 3		// East +X
 ```
-Where v1, v0, v2, v3 is the front face
+
+VBO and EBO
+```
+mVertices[120] = {
+			// Down -Y
+			 0.5f, -0.5f,  0.5f, 1.0f, 0.0f,    // 0
+			-0.5f, -0.5f,  0.5f, 0.0f, 0.0f,    // 1
+			-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,    // 2
+			 0.5f, -0.5f, -0.5f, 1.0f, 1.0f,    // 3
+			// Up +Y
+			 0.5f,  0.5f, -0.5f, 1.0f, 0.0f,    // 4
+			-0.5f,  0.5f, -0.5f, 0.0f, 0.0f,    // 5
+			-0.5f,  0.5f,  0.5f, 0.0f, 1.0f,    // 6
+			 0.5f,  0.5f,  0.5f, 1.0f, 1.0f,    // 7
+			// North -Z
+			-0.5f,  0.5f, -0.5f, 1.0f, 0.0f,    // 5
+			 0.5f,  0.5f, -0.5f, 0.0f, 0.0f,    // 4
+			 0.5f, -0.5f, -0.5f, 0.0f, 1.0f,    // 3
+			-0.5f, -0.5f, -0.5f, 1.0f, 1.0f,    // 2
+			// South +Z
+			 0.5f,  0.5f,  0.5f, 1.0f, 0.0f,    // 7
+			-0.5f,  0.5f,  0.5f, 0.0f, 0.0f,    // 6
+			-0.5f, -0.5f,  0.5f, 0.0f, 1.0f,    // 1
+			 0.5f, -0.5f,  0.5f, 1.0f, 1.0f,    // 0
+			// West -X
+			-0.5f,  0.5f,  0.5f, 1.0f, 0.0f,    // 6
+			-0.5f,  0.5f, -0.5f, 0.0f, 0.0f,    // 5
+			-0.5f, -0.5f, -0.5f, 0.0f, 1.0f,    // 2
+			-0.5f, -0.5f,  0.5f, 1.0f, 1.0f,    // 1
+			// East +X
+			 0.5f,  0.5f, -0.5f, 1.0f, 0.0f,    // 4
+			 0.5f,  0.5f,  0.5f, 0.0f, 0.0f,    // 7
+			 0.5f, -0.5f,  0.5f, 0.0f, 1.0f,    // 0
+			 0.5f, -0.5f, -0.5f, 1.0f, 1.0f,    // 3
+		}
+		
+mIndices[36] = {
+			0, 1, 2,    	0, 2, 3,	// Down -Y
+			4, 5, 6, 		4, 6, 7,	// Up +Y
+			8, 9, 10, 		8, 10, 11,	// North -Z
+			12, 13, 14, 	12, 14, 15,	// South +Z
+			16, 17, 18, 	16, 18, 19,	// West -X
+			20, 21, 22, 	20, 22, 23	// East +X
+		};
+```
 
 Good references:
  - https://github.com/jayanam/jgl_demos/tree/master - 3D scene renderer with property panel

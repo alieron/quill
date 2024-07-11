@@ -12,7 +12,7 @@ void Camera::orbitCam(float dx, float dy) {
     mYaw += dx * 0.25f;
     mPitch += dy * 0.25f;
 
-    // make sure that when pitch is out of bounds, screen doesn't get flipped
+    // Prevent pitch from becoming 90deg
     if (mPitch > 89.0f)
         mPitch = 89.0f;
     if (mPitch < -89.0f)
@@ -31,6 +31,5 @@ void Camera::zoomCam(float dr) {
         mRadius = cMinRadius;
     if (mRadius > cMaxRadius) 
         mRadius = cMaxRadius;
-    // std::cout<<mRadius<<std::endl;
     _updateCamera();
 };
