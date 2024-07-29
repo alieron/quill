@@ -33,7 +33,7 @@ Triangle primitives must be drawn in a anticlockwise order when looking from the
       |        /   |
       |      /     |
       |    /       |						^
-      |  /	       |						|
+      |  /         |						|
 (0,1) v2 --------- v3 (1,1)				Texture Up
 
 JSON Order:
