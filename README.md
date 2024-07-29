@@ -7,8 +7,9 @@ Progress
  - [x] Orbit camera
  - [x] Draw test cube(unique faces)
  - [x] Use from and to for cube corners
- - [ ] Only draw 2 faces if the defined element is flat
+ - [x] Only draw 2 faces if the defined element is flat
  - [ ] Scale UV coords
+ - [ ] Read element from json
  - [ ] GUI
 
 Rendering scheme
@@ -28,11 +29,11 @@ v1 --------- v0
 Triangle primitives must be drawn in a anticlockwise order when looking from the outside
 
 (0,0) v1 --------- v0 (1,0)
-	  |          / |
-	  |        /   |
-	  |      /     |
-	  |    /       |						^
-	  |  /	       |						|
+      |          / |
+      |        /   |
+      |      /     |
+      |    /       |						^
+      |  /	       |						|
 (0,1) v2 --------- v3 (1,1)				Texture Up
 
 JSON Order:
